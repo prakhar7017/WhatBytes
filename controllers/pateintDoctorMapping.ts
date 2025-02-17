@@ -5,11 +5,11 @@ import Doctor from "../models/doctorModel";
 import { AuthRequest } from "../middleware/authMiddleware";
 
 
-export const assignDoctorToPatient = async (req: AuthRequest, res: Response):Promise<any> => {
+export const assignDoctorToPatient = async (req: AuthRequest, res: Response): Promise<any> => {
   try {
     const { patientId, doctorId } = req.body;
 
-    
+
     const existingMapping = await PatientDoctorMapping.findOne({ where: { patientId, doctorId } });
     if (existingMapping) return res.status(400).json({ message: "Doctor is already assigned to the patient." });
 
@@ -21,9 +21,14 @@ export const assignDoctorToPatient = async (req: AuthRequest, res: Response):Pro
   }
 };
 
-export const getAllMappings = async (req: Request, res: Response):Promise<any> => {
+export const getAllMappings = async (req: Request, res: Response): Promise<any> => {
   try {
-    const mappings = await PatientDoctorMapping.findAll({ include: [Patient, Doctor] });
+    const mappings = await PatientDoctorMapping.findAll({
+      include: [
+        { model: Patient, as: 'patient' }, 
+        { model: Doctor, as: 'doctor' }    
+      ]
+    });
     return res.json(mappings);
   } catch (error) {
     return res.status(500).json({ message: "Error retrieving mappings", error });
@@ -31,13 +36,13 @@ export const getAllMappings = async (req: Request, res: Response):Promise<any> =
 };
 
 
-export const getDoctorsByPatientId = async (req: Request, res: Response):Promise<any> => {
+export const getDoctorsByPatientId = async (req: Request, res: Response): Promise<any> => {
   try {
     const { patientId } = req.params;
 
     const mappings = await PatientDoctorMapping.findAll({
       where: { patientId },
-      include: [Doctor],
+      include: [{ model: Doctor, as: 'doctor' }],
     });
 
     if (!mappings.length) return res.status(404).json({ message: "No doctors found for this patient." });
@@ -48,7 +53,7 @@ export const getDoctorsByPatientId = async (req: Request, res: Response):Promise
   }
 };
 
-export const removeDoctorFromPatient = async (req: Request, res: Response):Promise<any> => {
+export const removeDoctorFromPatient = async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
 

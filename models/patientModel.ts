@@ -1,6 +1,6 @@
-import { DataTypes, Model } from "sequelize";
-import sequelize from "../config/db";
-import User from "./userModel";
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '../config/db';
+import User from './userModel';
 
 class Patient extends Model {
   public id!: number;
@@ -22,11 +22,11 @@ Patient.init(
   },
   {
     sequelize,
-    modelName: "Patient",
-    tableName: "patients",
+    modelName: 'Patient',
+    tableName: 'patients',
   }
 );
 
-Patient.belongsTo(User, { foreignKey: "userId" });
+Patient.belongsTo(User, { foreignKey: 'userId' });
 
 export default Patient;

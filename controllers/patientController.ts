@@ -27,6 +27,7 @@ export const getPatients = async (req: AuthRequest, res: Response):Promise<any> 
 export const getPatientById = async (req: AuthRequest, res: Response):Promise<any> => {
   try {
     const patient = await Patient.findByPk(req.params.id);
+    
     if (!patient) return res.status(404).json({ message: "Patient not found" });
 
     return res.json(patient);
